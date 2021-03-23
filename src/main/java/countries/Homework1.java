@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Homework1 {
 
@@ -56,15 +58,19 @@ public class Homework1 {
      * Prints the names of the first ten least populous countries.
      */
     public void streamPipeline5() {
-        // TODO
+        countries.stream()
+                .sorted(Comparator.comparing(Country::getPopulation, Comparator.naturalOrder()))
+                .limit(10).forEach(country -> { System.out.println(country.getName());});
     }
 
     /**
      * Returns summary statistics about the number of country name translations associated with each country.
      */
     public IntSummaryStatistics streamPipeline6() {
-        // TODO
-        return null;
+        return countries.stream()
+                .filter(country -> country.getTranslations() != null)
+                .mapToInt(country -> country.getTranslations().size())
+                .summaryStatistics();
     }
 
     /**
@@ -78,7 +84,10 @@ public class Homework1 {
      * Prints the number of timezones for each country in the form {@code name:timezones}, in the ascending order of the number of timezones.
      */
     public void streamPipeline8() {
-        // TODO
+        countries.stream()
+                .forEach(country -> {
+                    System.out.println(country.getName() + ":"+country.getTimezones());
+                });
     }
 
     /**
@@ -112,23 +121,26 @@ ed by the language code "es").
      * Returns the average length of country names.
      */
     public double streamPipeline12() {
-        // TODO
-        return 0;
+        return countries.stream().filter(country -> country.getName() != null).mapToDouble(c-> c.getName().length()).average().getAsDouble();
     }
 
     /**
      * Prints all distinct regions of the countries with null area.
      */
     public void streamPipeline13() {
-        // TODO
+        countries.stream()
+                .filter(country -> country.getArea() == null)
+                .map(country -> country.getRegion()).distinct()
+                .forEach(System.out::println);
     }
 
     /**
      * Returns the largest country with non-null area.
      */
     public Optional<Country> streamPipeline14() {
-        // TODO
-        return null;
+        return countries.stream()
+                .filter(c -> c.getArea() != null)
+                .max(Comparator.comparing(Country::getArea));
     }
 
     /**
@@ -145,7 +157,11 @@ ed by the language code "es").
      * Prints all distinct timezones of European and Asian countries.
      */
     public void streamPipeline16() {
-        // TODO
+        countries.stream()
+                .filter(country -> country.getRegion() == Region.ASIA || country.getRegion() == Region.EUROPE)
+                .map(country -> country.getTimezones())
+                .distinct()
+                .forEach(System.out::println);
     }
 
 }
